@@ -23,7 +23,7 @@ rm(list = ls())
 everything<-FALSE
 ```
 
-## Load cleaned complete case dataset
+# Load cleaned complete case dataset
  
 we load the cleaned dataset with procedure information *myAQI.Rdata* which we generated in the Project *AQI_Import*.   
 
@@ -32,6 +32,8 @@ we load the cleaned dataset with procedure information *myAQI.Rdata* which we ge
 load("Data/myAQI.Rdata")
 str(myAQI)
 ```
+
+# Four Predictors
 
 ## Fixed Effects Model 
 
@@ -48,8 +50,6 @@ fit_log0 <- glm(formula0,
              family = binomial(link = "log"), 
              data = myAQI)
 ```
-
-
 
 ## Random Effects Model
 
@@ -99,15 +99,29 @@ compareOR <- data.frame(random=ORrandom, fixed= ORfixed)
 kable(compareOR, caption = ("Odds ratios"))
 ```
 
-## Random Effects Model
+# Five predictors
+
+## Second Random Effects Model
 
 fitted with glmer and procedure as random effect
+adding ASA status
 
 ```{r eval=everything, echo=TRUE}
-formulaR0 <- ond ~ pay +age_group +sex + ASA + (1 | cpt)
+formulaR2 <- ond ~ pay +age_group +sex + ASA + (1 | cpt)
 
-m <- glmer(formulaR0, data = myAQI, family = binomial, 
+m2 <- glmer(formulaR2, data = myAQI, family = binomial, 
            control = glmerControl(optimizer = "bobyqa"),
            nAGQ = 10)
-save(fit_log0, m, file = "Results/zero.Rdata")
+
+save(m2, file = "Results/second.Rdata")
 ```
+
+```{r}
+load("Results/second.Rdata")
+```
+
+### Details Second Random Effects Model
+
+```{r}
+summary(m2)
+ORrandom <- exp(m2@beta) # exponentiated coefficients
