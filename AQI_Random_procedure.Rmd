@@ -1,0 +1,53 @@
+---
+title: "LogLink Logistic regression AQI data"
+author: "Michael Andreae"
+output: pdf_document
+---
+
+# Insurance status predicts antiemetic use 
+we build a random effects model with procedure as random effects
+
+```{r, packages, message=FALSE, echo=FALSE, warning=FALSE}
+library(knitr) # required to set options in Markdown R
+library(lme4)
+# library(nlme)
+```
+
+
+
+```{r, global_options, echo=FALSE}
+# set options
+opts_chunk$set(fig.width=6, fig.height=4, fig.path='Figs/',
+               echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+## Load cleaned complete case dataset
+ 
+we load the cleaned dataset with procedure information *myAQI.Rdata* which we generated in the Project *AQI_Import*.   
+
+
+```{r, load_clean_dataset, echo=TRUE}
+rm(list = ls())
+load("Data/myAQI.Rdata")
+str(myAQI)
+```
+
+## Logistic Model Link : log with glm
+
+### Estimate fit_log0 with **four** predictors: 
+
+formula0 <- ond ~ pay +age_group +sex
+
+```{r, log0, echo=TRUE}
+
+formula0 <- ond ~ pay +age_group +sex
+
+fit_log0 <- glm(formula0, 
+             family = binomial(link = "log"), 
+             data = myAQI)
+summary(fit_log0)
+p_values <- summary.glm((fit_log0))$coefficient[,4]
+OR <- exp(coef(fit_log0)) # exponentiated coefficients 
+# CI_fitlog<- confint(fit_log) # 95% CI for the coefficients, takes too long
+kable(data.frame(OR, p_values), digits = 3, caption = "Results log0")
+```
