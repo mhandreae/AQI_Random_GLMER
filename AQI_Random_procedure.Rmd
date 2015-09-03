@@ -1,0 +1,127 @@
+---
+title: "LogLink Logistic regression AQI data"
+author: "Michael Andreae"
+output: pdf_document
+---
+
+# Insurance status predicts antiemetic use 
+we build a random effects model with procedure as random effects
+
+```{r, packages, message=FALSE, echo=FALSE, warning=FALSE}
+library(knitr) # required to set options in Markdown R
+library(lme4)
+# library(nlme)
+```
+
+
+
+```{r, global_options, echo=FALSE}
+# set options
+opts_chunk$set(fig.width=6, fig.height=4, fig.path='Figs/',
+               echo=FALSE, warning=FALSE, message=FALSE)
+rm(list = ls())
+everything<-FALSE
+```
+
+# Load cleaned complete case dataset
+ 
+we load the cleaned dataset with procedure information *myAQI.Rdata* which we generated in the Project *AQI_Import*.   
+
+
+```{r, load_clean_dataset, echo=TRUE}
+load("Data/myAQI.Rdata")
+str(myAQI)
+```
+
+# Four Predictors
+
+## Fixed Effects Model 
+
+Link : log 
+fitted with glm with **four** predictors: 
+
+formula0 <- ond ~ pay +age_group +sex
+
+```{r, log0, echo=TRUE, eval=everything}
+
+formula0 <- ond ~ pay +age_group +sex
+
+fit_log0 <- glm(formula0, 
+             family = binomial(link = "log"), 
+             data = myAQI)
+```
+
+## Random Effects Model
+
+fitted with glmer and procedure as random effect
+
+```{r eval=everything, echo=TRUE}
+formulaR0 <- ond ~ pay +age_group +sex + (1 | cpt)
+
+m <- glmer(formulaR0, data = myAQI, family = binomial, 
+           control = glmerControl(optimizer = "bobyqa"),
+           nAGQ = 10)
+save(fit_log0, m, file = "Results/zero.Rdata")
+```
+
+
+## Comparison of random versus Fixed effects model
+
+```{r}
+load("Results/zero.Rdata")
+```
+
+### Details Fixed Effects
+
+```{r}
+summary(fit_log0)
+p_values <- summary.glm((fit_log0))$coefficient[,4]
+ORfixed <- exp(coef(fit_log0)) # exponentiated coefficients 
+# CI_fitlog<- confint(fit_log) # 95% CI for the coefficients, takes too long
+kable(data.frame(ORfixed, p_values), digits = 3, caption = "Results log0")
+```
+
+### Details Random Effects
+
+```{r}
+summary(m)
+ORrandom <- exp(m@beta) # exponentiated coefficients
+```
+
+
+### Random v. Fixed Side by Side 
+
+```{r}
+compareCoef <- data.frame(random=m@beta, fixed=coef(fit_log0))
+kable(compareCoef, caption = ("Coefficients"))
+
+compareOR <- data.frame(random=ORrandom, fixed= ORfixed)
+kable(compareOR, caption = ("Odds ratios"))
+```
+
+# Five predictors
+
+## Second Random Effects Model
+
+fitted with glmer and procedure as random effect
+adding ASA status
+
+```{r eval=everything, echo=TRUE}
+formulaR2 <- ond ~ pay +age_group +sex + ASA + (1 | cpt)
+
+m2 <- glmer(formulaR2, data = myAQI, family = binomial, 
+           control = glmerControl(optimizer = "bobyqa"),
+           nAGQ = 10)
+
+save(m2, file = "Results/second.Rdata")
+```
+
+```{r}
+load("Results/second.Rdata")
+```
+
+### Details Second Random Effects Model
+
+```{r}
+summary(m2)
+ORrandom <- exp(m2@beta) # exponentiated coefficients
