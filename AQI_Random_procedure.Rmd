@@ -37,7 +37,7 @@ str(myAQI)
 
 ## Fixed Effects Model 
 
-Link : log 
+Link : logit
 fitted with glm with **four** predictors: 
 
 formula0 <- ond ~ pay +age_group +sex
@@ -47,7 +47,7 @@ formula0 <- ond ~ pay +age_group +sex
 formula0 <- ond ~ pay +age_group +sex
 
 fit_log0 <- glm(formula0, 
-             family = binomial(link = "log"), 
+             family = binomial(link = "logit"), 
              data = myAQI)
 ```
 
@@ -116,14 +116,72 @@ m2 <- glmer(formulaR2, data = myAQI, family = binomial,
 save(m2, file = "Results/second.Rdata")
 ```
 
-```{r}
-load("Results/second.Rdata")
-```
 
 ### Details Second Random Effects Model
 
 ```{r}
+load("Results/second.Rdata")
 summary(m2)
 ORrandom2 <- exp(m2@beta) # exponentiated coefficients
 compareOR2 <- data.frame(random2= ORrandom2[1:10], random0 = ORrandom, fixed = ORfixed)
 kable(compareOR2, caption = ("Odds ratios random effects model 2"))
+```
+
+
+# Six  predictors, two random effects
+
+## Third Random Effects Model 
+
+fitted with glmer and procedure as random effect
+adding  a seond random effect (practice)
+
+
+```{r eval=everything, echo=TRUE}
+formulaR3 <- ond ~ pay +age_group +sex + ASA + (1 | cpt) +(1 | practice)
+
+m3 <- glmer(formulaR3, data = myAQI, family = binomial, 
+           control = glmerControl(optimizer = "bobyqa"))
+
+save(m3, file = "Results/third.Rdata")
+```
+
+```{r}
+load("Results/third.Rdata")
+```
+
+### Details Third Random Effects Model
+
+```{r}
+summary(m3)
+ORrandom3 <- exp(m3@beta) # exponentiated coefficients
+compareOR3 <- data.frame(random3= ORrandom3[1:10], random2= ORrandom2[1:10], random0 = ORrandom, fixed = ORfixed)
+kable(compareOR3, caption = ("Odds ratios random effects model 3"))
+```
+
+
+# Seven  predictors, two random effects
+
+## Fourth Random Effects Model 
+
+fitted with glmer and procedure as random effect
+adding  a seond random effect (practice) and more predictors (anes_type and ASA)
+
+
+```{r eval=everything, echo=TRUE}
+formulaR4 <- ond ~ pay +age_group +sex + ASA + anes_type+ (1 | cpt) +(1 | practice)
+
+m4 <- glmer(formulaR4, data = myAQI, family = binomial, 
+           control = glmerControl(optimizer = "bobyqa"))
+
+save(m4, file = "Results/forth.Rdata")
+```
+
+### Details Forth Random Effects Model
+
+```{r}
+load("Results/forth.Rdata")
+summary(m4)
+ORrandom4 <- exp(m4@beta) # exponentiated coefficients
+compareOR4 <- data.frame(random4 = ORrandom4[1:10], random3 = ORrandom3[1:10], random2= ORrandom2[1:10], random0 = ORrandom, fixed = ORfixed)
+kable(compareOR4, caption = ("Odds ratios random effects model 3"))
+```
