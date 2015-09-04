@@ -116,14 +116,45 @@ m2 <- glmer(formulaR2, data = myAQI, family = binomial,
 save(m2, file = "Results/second.Rdata")
 ```
 
-```{r}
-load("Results/second.Rdata")
-```
 
 ### Details Second Random Effects Model
 
 ```{r}
+load("Results/second.Rdata")
 summary(m2)
 ORrandom2 <- exp(m2@beta) # exponentiated coefficients
 compareOR2 <- data.frame(random2= ORrandom2[1:10], random0 = ORrandom, fixed = ORfixed)
 kable(compareOR2, caption = ("Odds ratios random effects model 2"))
+```
+
+
+# Six  predictors
+
+## Third Random Effects Model
+
+fitted with glmer and procedure as random effect
+adding  a seond random effect (practice)
+
+
+```{r eval=everything, echo=TRUE}
+formulaR3 <- ond ~ pay +age_group +sex + ASA + (1 | cpt) +(1 | practice)
+
+m3 <- glmer(formulaR3, data = myAQI, family = binomial, 
+           control = glmerControl(optimizer = "bobyqa"))
+
+save(m3, file = "Results/third.Rdata")
+```
+
+```{r}
+load("Results/third.Rdata")
+```
+
+### Details Third Random Effects Model
+
+```{r}
+summary(m3)
+ORrandom3 <- exp(m3@beta) # exponentiated coefficients
+compareOR3 <- data.frame(random3= ORrandom3[1:10], random2= ORrandom2[1:10], random0 = ORrandom, fixed = ORfixed)
+kable(compareOR3, caption = ("Odds ratios random effects model 3"))
+```
+
