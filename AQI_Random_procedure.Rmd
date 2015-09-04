@@ -205,3 +205,37 @@ save(ml0, file = "Results/zeroLog.Rdata")
 
 The model does not seem to run:
 *Error: (maxstephalfit) PIRLS step-halvings failed to reduce deviance in pwrssUpdate*
+
+# Convergence 
+
+## Optimized Fourth Random Effects Model 
+
+fitted with glmer and procedure as random effect with **optimizer** *nloptwrap*
+adding  a second random effect (practice) and more predictors (anes_type and ASA)
+
+### Random Model 4 with optimizer nloptwrap
+
+```{r eval=everything, echo=TRUE}
+formulaR4 <- ond ~ pay +age_group +sex + ASA + anes_type+ (1 | cpt) +(1 | practice)
+
+opt4 <- glmer(formulaR4, data = myAQI, family = binomial, 
+           control = glmerControl(optimizer = "nloptwrap"))
+
+save(opt4, file = "Results/optim4.Rdata")
+```
+
+### Results
+
+```{r}
+load("Results/optim4.Rdata")
+
+ORrandomOPT4 <- exp(opt4@beta) # exponentiated coefficients
+compareOR4 <- data.frame(randomOpt4 = ORrandomOPT4[1:10], ORrandom4 = ORrandom4[1:10], random3 = ORrandom3[1:10], random2= ORrandom2[1:10], random0 = ORrandom, fixed = ORfixed)
+kable(compareOR4, caption = ("nloptwrap model 4 compared"))
+```
+
+### Details
+
+```{r}
+summary(opt4)
+```
