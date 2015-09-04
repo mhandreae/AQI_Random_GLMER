@@ -276,3 +276,38 @@ summary(con4)
 ```{r}
 summary(con4)
 ```
+
+## ASA continuous in Fourth Random Effects Model 
+
+Now *ASA* is also **continuous**, as is *age*, 
+fitted with glmer and procedure as random effect
+including two random effects (practice and procedure) and more predictors (anes_type and ASA)
+
+```{r}
+myAQI$asa <- as.numeric(myAQI$ASA)
+hist(myAQI$asa)
+```
+
+### Model
+
+```{r eval=everything, echo=TRUE}
+formulaCC4 <- ond ~ pay +age +sex + asa + anes_type+ (1 | cpt) +(1 | practice)
+
+concon4 <- glmer(formulaCC4, data = myAQI, family = binomial, 
+           control = glmerControl(optimizer = "bobyqa"))
+
+save(concon4, file = "Results/concon4.Rdata")
+```
+
+### Compare with other Random Effects Models
+
+```{r}
+load("Results/concon4.Rdata")
+(ORrandomCC4 <- exp(concon4@beta)) # exponentiated coefficients
+```
+
+### Details
+
+```{r}
+summary(concon4)
+```
