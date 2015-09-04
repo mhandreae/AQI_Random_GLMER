@@ -208,6 +208,9 @@ The model does not seem to run:
 
 # Convergence 
 
+Here a link on how to address issues with convergence:
+<https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html>
+
 ## Optimized Fourth Random Effects Model 
 
 fitted with glmer and procedure as random effect with **optimizer** *nloptwrap*
@@ -238,4 +241,38 @@ kable(compareOR4, caption = ("nloptwrap model 4 compared"))
 
 ```{r}
 summary(opt4)
+```
+
+## Convergence with continuous predictors age and ASA status 
+
+
+## Age continuous in Fourth Random Effects Model 
+
+Now *age* is **continuous** fitted with glmer and procedure as random effect
+including two random effects (practice and procedure) and more predictors (anes_type and ASA)
+
+### Model
+
+```{r eval=everything, echo=TRUE}
+formulaC4 <- ond ~ pay +age +sex + ASA + anes_type+ (1 | cpt) +(1 | practice)
+
+con4 <- glmer(formulaC4, data = myAQI, family = binomial, 
+           control = glmerControl(optimizer = "bobyqa"))
+
+save(con4, file = "Results/contin4.Rdata")
+```
+
+### Compare with other Random Effects Models
+
+```{r}
+load("Results/contin4.Rdata")
+kable(compareOR4, caption = ("Comparing Random Effects Models"))
+(ORrandomC4 <- exp(con4@beta)) # exponentiated coefficients
+summary(con4)
+```
+
+### Details
+
+```{r}
+summary(con4)
 ```
