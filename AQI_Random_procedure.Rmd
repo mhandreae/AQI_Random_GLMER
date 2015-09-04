@@ -33,6 +33,8 @@ load("Data/myAQI.Rdata")
 str(myAQI)
 ```
 
+# Logit Models
+
 # Four Predictors
 
 ## Fixed Effects Model 
@@ -185,3 +187,21 @@ ORrandom4 <- exp(m4@beta) # exponentiated coefficients
 compareOR4 <- data.frame(random4 = ORrandom4[1:10], random3 = ORrandom3[1:10], random2= ORrandom2[1:10], random0 = ORrandom, fixed = ORfixed)
 kable(compareOR4, caption = ("Odds ratios random effects model 3"))
 ```
+
+# Log Link
+
+## Log Link Random Effects Model
+
+fitted with glmer and procedure as random effect
+
+```{r eval=FALSE, echo=TRUE, warning=FALSE}
+formulaR0 <- ond ~ pay +age_group +sex + (1 | cpt)
+
+ml0 <- glmer(formulaR0, data = myAQI, family = binomial(link = "log"), 
+           control = glmerControl(optimizer = "bobyqa"),
+           nAGQ = 10)
+save(ml0, file = "Results/zeroLog.Rdata")
+```
+
+The model does not seem to run:
+*Error: (maxstephalfit) PIRLS step-halvings failed to reduce deviance in pwrssUpdate*
