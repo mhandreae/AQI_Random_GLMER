@@ -37,7 +37,7 @@ str(myAQI)
 
 ## Fixed Effects Model 
 
-Link : log 
+Link : logit
 fitted with glm with **four** predictors: 
 
 formula0 <- ond ~ pay +age_group +sex
@@ -47,7 +47,7 @@ formula0 <- ond ~ pay +age_group +sex
 formula0 <- ond ~ pay +age_group +sex
 
 fit_log0 <- glm(formula0, 
-             family = binomial(link = "log"), 
+             family = binomial(link = "logit"), 
              data = myAQI)
 ```
 
@@ -128,9 +128,9 @@ kable(compareOR2, caption = ("Odds ratios random effects model 2"))
 ```
 
 
-# Six  predictors
+# Six  predictors, two random effects
 
-## Third Random Effects Model
+## Third Random Effects Model 
 
 fitted with glmer and procedure as random effect
 adding  a seond random effect (practice)
@@ -158,3 +158,30 @@ compareOR3 <- data.frame(random3= ORrandom3[1:10], random2= ORrandom2[1:10], ran
 kable(compareOR3, caption = ("Odds ratios random effects model 3"))
 ```
 
+
+# Seven  predictors, two random effects
+
+## Fourth Random Effects Model 
+
+fitted with glmer and procedure as random effect
+adding  a seond random effect (practice) and more predictors (anes_type and ASA)
+
+
+```{r eval=everything, echo=TRUE}
+formulaR4 <- ond ~ pay +age_group +sex + ASA + anes_type+ (1 | cpt) +(1 | practice)
+
+m4 <- glmer(formulaR4, data = myAQI, family = binomial, 
+           control = glmerControl(optimizer = "bobyqa"))
+
+save(m4, file = "Results/forth.Rdata")
+```
+
+### Details Forth Random Effects Model
+
+```{r}
+load("Results/forth.Rdata")
+summary(m4)
+ORrandom4 <- exp(m4@beta) # exponentiated coefficients
+compareOR4 <- data.frame(random4 = ORrandom4[1:10], random3 = ORrandom3[1:10], random2= ORrandom2[1:10], random0 = ORrandom, fixed = ORfixed)
+kable(compareOR4, caption = ("Odds ratios random effects model 3"))
+```
