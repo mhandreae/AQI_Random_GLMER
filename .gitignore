@@ -1,6 +1,8 @@
 .Rproj.user
 .Rhistory
 .RData
+.html
+.pdf
 AQI_Random_procedure.pdf
 Data
 Examples_ Mixed Effects Logistic Regression.pdf
@@ -9,3 +11,4 @@ Convergence warnings.pdf
 path.txt
 AQI_Refine_RandomEffectsModel.pdf
 Figs
+AQI_Refine_RandomEffectsModel.html

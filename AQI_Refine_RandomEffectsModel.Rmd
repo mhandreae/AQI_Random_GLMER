@@ -1,7 +1,7 @@
 ---
 title: "Refine Random effects regression AQI data"
 author: "Michael Andreae"
-output: pdf_document
+output: html_document
 ---
 
 # Insurance status predicts antiemetic use 
