@@ -25,7 +25,7 @@ everything<-FALSE
 
 # Load cleaned complete case dataset
  
-we load the cleaned dataset with procedure information *myAQI.Rdata* which we generated in the Project *AQI_Import*.   
+we load the cleaned dataset with procedure *cpt* and provider *prov* information *myAQI_cpt.Rdata* which we generated in the Project *AQI_Import*.   
 
 
 ```{r, load_clean_dataset, echo=TRUE}
