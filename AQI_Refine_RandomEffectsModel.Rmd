@@ -70,7 +70,6 @@ save(fit_log2.0, m2.0, file = "Results/results2.0.Rdata")
 ## Comparison of random versus Fixed effects model
 
 ```{r}
-rm(list = ls())
 load("Results/results2.0.Rdata")
 ```
 
@@ -100,4 +99,44 @@ kable(compareCoef2.0, caption = ("Coefficients"))
 
 compareOR2.0 <- data.frame(random=ORrandom2.0, fixed= ORfixed2.0)
 kable(compareOR2.0, caption = ("Odds ratios"))
+```
+
+# Seven  predictors, two random effects
+
+## Random Effects Model 2.1
+
+fitted with glmer and procedure as random effect
+adding  a seond random effect (practice) and more predictors (anes_type and ASA)
+
+
+```{r eval=everything, echo=TRUE}
+load("Data/myAQI.Rdata")
+
+formulaR2.1 <- ond ~ pay +age_group +sex + ASA + + practice + anes_type+ (1 | cpt)
+
+m2.1 <- glmer(formulaR2.1, data = myAQI, family = binomial, 
+           control = glmerControl(optimizer = "bobyqa"))
+
+save(m2.1, file = "Results/results2.1.Rdata")
+```
+
+### Details Random Effects 2.1
+
+```{r}
+load("Results/results2.1.Rdata")
+
+summary(m2.1)
+
+ORfixed2.0 <- exp(coef(fit_log2.0)) # exponentiated coefficients 
+ORrandom2.0 <- exp(m2.0@beta) # exponentiated coefficients
+ORrandom2.1 <- exp(m2.1@beta) # exponentiated coefficients
+```
+### Random 2.1 v. Fixed Side by Side 
+
+```{r}
+load("Results/results2.0.Rdata")
+
+compareOR2.1 <- data.frame(random2.1 = ORrandom2.1[1:10], random2.0=ORrandom2.0[1:10], fixed= ORfixed2.0)
+
+kable(compareOR2.1, caption = ("Odds ratios"))
 ```
